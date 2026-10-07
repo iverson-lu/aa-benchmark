@@ -2,6 +2,10 @@
 
 轻量的模型基准对比 App：原生 TypeScript 前端、Cloudflare Worker、D1（两张表）和 R2 图标。只保存最新数据，原始下载 HTML 保留供参考。当前数据来自原始 HTML，尚未核验来源数值。
 
+线上地址：https://aa-benchmark.iverson-lu.workers.dev
+
+当前账号的云端 D1 和 R2 已初始化，`wrangler.jsonc` 已配置真实 D1 ID。日常代码更新运行 `npm run deploy`；数据更新运行 `npm run data:remote`；图标更新运行 `npm run assets:remote`，无需再次创建资源。GitHub 自动部署尚未连接。
+
 ## 本地预览
 
 需要 Node.js 22 或更新版本。
@@ -30,7 +34,7 @@ npx wrangler d1 create aa-benchmark-db
 npx wrangler r2 bucket create aa-benchmark-icons
 ```
 
-将返回的真实 D1 `database_id` 填入 `wrangler.jsonc`，替换全零的本地占位值。若账号尚未启用 R2，需要先在 Cloudflare 控制台启用。
+如果部署到其他账号，将新创建的真实 D1 `database_id` 填入 `wrangler.jsonc`，替换当前 ID。若账号尚未启用 R2，需要先在 Cloudflare 控制台启用。
 
 ```powershell
 npm run data:remote

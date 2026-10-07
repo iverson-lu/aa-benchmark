@@ -29,7 +29,10 @@ export default {
       headers.set('ETag', object.httpEtag);
       headers.set('Cache-Control', 'public, max-age=3600');
       headers.set('X-Content-Type-Options', 'nosniff');
-      if (request.headers.get('If-None-Match') === object.httpEtag) return new Response(null, { status: 304, headers });
+      const matches = request.headers.get('If-None-Match')?.split(',').some(tag =>
+        tag.trim() === '*' || tag.trim().replace(/^W\//, '') === object.httpEtag
+      );
+      if (matches) return new Response(null, { status: 304, headers });
       return new Response(request.method === 'HEAD' ? null : object.body, { headers });
     }
     if (url.pathname.startsWith('/api/')) return new Response('Not found', { status: 404 });
