@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width,initial-scale=1" name="viewport">
+<title>Leading LLMs for Coding &amp; Agent Benchmarks</title>
+
+<link rel="stylesheet" href="/src/style.css"></head>
+<body>
+<div class="wrap">
+<div class="hero">
+<div>
+<h1>Leading LLMs for Coding &amp; Agent Benchmarks</h1>
+<div class="subtitle">23 Models · 9 Benchmarks · AA Overall vs. Model Capability vs. Coding Agent + Harness</div>
+</div>
+<div class="asof"><b id="dataDate">Loading latest data…</b><br>Imported from the original HTML. Price is Input / Output USD per 1M tokens.</div>
+</div>
+<div class="app-status" id="appStatus" role="status">正在加载模型数据…</div><div class="card"><div class="table-toolbar">
+<div class="toolbar-left">
+<div class="search-wrap">
+<svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path></svg>
+<input autocomplete="off" id="modelSearch" placeholder="Search model, provider, harness…" type="search">
+</div>
+<select aria-label="Filter by provider" id="providerFilter">
+<option value="">All providers</option>
+<option value="Alibaba">Alibaba</option><option value="Anthropic">Anthropic</option><option value="DeepSeek">DeepSeek</option><option value="Google">Google</option><option value="Meta">Meta</option><option value="Moonshot">Moonshot</option><option value="OpenAI">OpenAI</option><option value="SpaceXAI">SpaceXAI</option><option value="Xiaomi">Xiaomi</option><option value="Zhipu AI">Zhipu AI</option></select>
+<select aria-label="Filter by model type" id="groupFilter">
+<option value="">All models</option>
+<option value="closed">Proprietary / Closed</option>
+<option value="open">Open weights</option>
+</select>
+<select aria-label="Filter by harness data" id="harnessFilter">
+<option value="">All harness coverage</option>
+<option value="yes">Has harness data</option>
+<option value="no">No harness data</option>
+</select>
+<button class="btn ghost" id="resetFilters" type="button">Reset</button>
+</div>
+<div class="toolbar-right">
+<span class="count-chip" id="visibleCount">Loading…</span>
+<span class="count-chip selected-chip" id="selectedCount">0 selected</span>
+<button class="btn ghost" disabled="" id="clearSelection" type="button">Clear selection</button>
+<button class="btn primary" disabled="" id="compareSelected" type="button">Compare selected</button>
+</div>
+</div><div class="scroll">
+<table>
+<thead><tr class="header-groups"><th class="head-meta" colspan="3">Model Info</th><th class="head-aa" colspan="1">AA Overall</th><th class="head-model" colspan="5">Model Capability</th><th class="head-agent" colspan="6">Coding Agent + Harness</th></tr><tr>
+<th class="head-meta">Model</th><th class="head-meta">Provider</th><th class="head-meta">Price<small>USD / 1M tokens<br>Input / Output</small></th>
+<th class="head-aa">AA Intelligence<small>(v4.3.2)</small></th>
+<th class="head-model">HLE<small>(%)</small></th>
+<th class="head-model">GDPval-AA v2.1<small>(Elo)</small></th>
+<th class="head-model">AutomationBench-AA<small>(%)</small></th>
+<th class="head-model">SciCode<small>Coding · %</small></th><th class="head-model">Terminal-Bench 4.0<small>Model (%)</small></th>
+<th class="head-agent">Agent Harness</th>
+<th class="head-agent">DeepSWE v1.1<small>(%)</small></th>
+<th class="head-agent">Terminal-Bench 4.0<small>Harness (%)</small></th>
+<th class="head-agent">SWE-Atlas-QnA<small>(%)</small></th>
+<th class="head-agent" title="Average total tokens consumed per task. Lower is more efficient.">Tokens / Task<small>Avg total</small></th><th class="head-agent" title="Average API cost per task. Lower is more economical.">Cost / Task<small>Avg API cost</small></th></tr></thead>
+<tbody></tbody>
+</table>
+</div><div class="no-results" id="noResults">No models match the current filters.</div></div>
+<div class="notes">
+<div class="note"><b>Note.</b> Qwen3.8 Max (0902)* uses AA's “Claude Code + Qwen3.8 Max” agent result; AA does not explicitly label that agent run as “0902”.</div>
+</div>
+</div>
+
+<script type="module" src="/src/main.ts"></script></body></html>
