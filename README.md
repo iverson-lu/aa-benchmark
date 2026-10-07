@@ -11,12 +11,16 @@
 需要 Node.js 22 或更新版本。
 
 ```powershell
+git clone https://github.com/iverson-lu/aa-benchmark.git
+cd aa-benchmark
 npm ci
 npm run setup:local
 npm run dev
 ```
 
 打开 http://localhost:8787 。本地 D1 和 R2 使用 Wrangler 模拟并持久化到 `.wrangler`，无需登录 Cloudflare。
+
+换机器后同样执行以上步骤即可。`.wrangler`、`node_modules` 和登录凭据不进入 Git；`setup:local` 会根据仓库中的 `data/latest.json` 和 `icons/` 重建本地数据及图标。本地修改存储中的数据不会自动同步到云端，也不会随 Git 提交；需要保留的数据请更新源文件。
 
 支持搜索、厂商/模型类型/Harness 筛选、多模型勾选对比、最佳值高亮、Escape 退出对比。缺失值显示为 `—`。
 
@@ -26,7 +30,27 @@ npm run dev
 
 `npm run data:extract` 是从原始 HTML 重新提取数据及页面的工具，会覆盖 `data/latest.json`、`index.html`、`src/style.css` 和对应图标；日常更新不要运行它。
 
-## 首次部署 Cloudflare
+## 换机器更新现有线上 App
+
+完成本地安装后，在新机器上登录有权访问当前 Cloudflare 账号的用户：
+
+```powershell
+npx wrangler login
+npm run deploy
+```
+
+这会更新现有 Worker，使用已配置的 D1 和 R2，不需要重新创建云端资源。
+
+如需更新线上数据或图标，分别运行：
+
+```powershell
+npm run data:remote
+npm run assets:remote
+```
+
+`data:remote` 会替换远端当前模型和厂商数据。GitHub 和 Cloudflare 登录独立管理，推送代码时需在新机器配置 GitHub 认证。当前未连接 GitHub 自动部署，仅 `git push` 不会更新线上 App。
+
+## 首次部署到其他 Cloudflare 账号
 
 ```powershell
 npx wrangler login
