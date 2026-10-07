@@ -11,7 +11,7 @@
   "d1_databases": [{
     "binding": "DB",
     "database_name": "aa-benchmark-db",
-    "database_id": "00000000-0000-0000-0000-000000000000",
+    "database_id": "4c4165a4-7de6-482d-aff3-1f84d28151ec",
     "migrations_dir": "migrations"
   }],
   "r2_buckets": [{ "binding": "ICONS", "bucket_name": "aa-benchmark-icons" }]
