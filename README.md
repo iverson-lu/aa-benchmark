@@ -2,7 +2,7 @@
 
 轻量的模型决策 Dashboard，保留搜索、厂商/模型类型/Harness 筛选、分组表格、热力图与冻结表头。新增六种列视图、2–5 模型对比面板、Terminal-Bench Harness Δ、数据来源弹窗及成本 / 能力 Pareto 图。使用原生 TypeScript 前端、Cloudflare Worker、D1（`providers`、`models` 两张表）和 R2 图标，仅保存最新数据。
 
-基础数据保留原始 HTML 导入结果；近期补充模型的核对来源保存在 `data/*sources.md`。本次 Dashboard 升级不修改任何基准数值，也不代表历史数据已全部核验。
+基础数据保留原始 HTML 导入结果；2026-10-10 对 AA 官方页面进行了全表核对，并将每个有值的数据格连接到对应来源。核验和改动记录见 `data/2026-10-10-full-audit.md`。
 
 ## 模型决策功能与计算口径
 
@@ -20,9 +20,9 @@ Coding Agent Index 使用 AA 官方公式复算，未冒充 AA 直接发布的�
 
 ### 渐进补充来源
 
-`data/provenance.ts` 是独立的模型 ID / 数据字段来源映射，由 Worker 附加到 `/api/snapshot`，无需变更 D1 结构或重新导入数值。当前只接入仓库来源文档明确记录的 Haiku 5.5、Gemini 4 Argon、MiMo-V2.6-Flash 及 Qwen Agent 版本备注；其余历史成绩尚缺逐项原始链接、测试 / 发布日期和方法论信息。
+`data/provenance.ts` 为所有已填模型分数、Agent 成绩、任务成本、Token 数和 API 价格提供逐格来源链接，由 Worker 附加到 `/api/snapshot`，无需变更 D1 结构。每个来源弹窗都包含对应的 Artificial Analysis 对比页和方法说明；只有有值的单元格显示来源入口。
 
-`checkedDate` 表示来源核对日期，`data_date` 表示数据快照日期，两者均不能当作测试 / 发布日期。未知缺失原因仍显示 `—`；仅有来源信息的单元格在悬停或键盘聚焦时显示 ⓘ，默认隐藏，点击数据本身也可打开详情，支持触屏。来源字段支持 `source`、`sourceUrl`、`methodologyUrl`、`date`、`checkedDate`、`harness`、`effort`、`status` 和 `notes`，只填写已知事实。
+`checkedDate` 表示来源核对日期，`data_date` 表示数据快照日期，两者均不能当作测试 / 发布日期。未知缺失原因仍显示 `—`；有来源的单元格在悬停或键盘聚焦时显示 ⓘ，默认隐藏，点击数据本身也可打开详情，支持触屏。来源字段支持 `source`、`sourceUrl`、`methodologyUrl`、`date`、`checkedDate`、`harness`、`effort`、`status` 和 `notes`，只填写已知事实。
 
 前端还兼容 `{ value: 73, source: '…', status: 'Published', … }` 结构的基准值及原有数字 / `null`。当前 D1 和 `data/latest.json` 仍保存数字 / `null`；来源信息独立维护在映射中。
 

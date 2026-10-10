@@ -11,7 +11,7 @@ h1{font-size:29px;line-height:1.08;margin:0;color:#112f63;font-weight:830;letter
 .card{background:#fff;border:1px solid #dbe4ef;border-radius:10px;box-shadow:0 6px 18px rgba(17,47,99,.09);overflow:hidden}
 .scroll{overflow:auto}
 table{width:100%;min-width:1530px;border-collapse:separate;border-spacing:0}
-thead th{position:sticky;top:0;z-index:3;background:linear-gradient(180deg,#113d73,#0b2f5d);color:#fff;font-size:11.5px;line-height:1.15;font-weight:750;padding:10px 7px;border-right:1px solid rgba(255,255,255,.26);border-bottom:1px solid #0a284d;text-align:center;vertical-align:bottom}
+thead th{position:sticky;top:0;z-index:3;background:linear-gradient(180deg,#113d73,#0b2f5d);color:#fff;font-size:11.5px;line-height:1.15;font-weight:750;padding:10px 7px;border-right:1px solid rgba(255,255,255,.26);border-bottom:1px solid #0a284d;text-align:center;vertical-align:middle}
 thead th:first-child{text-align:left;padding-left:13px}
 thead small{display:block;font-size:10.5px;font-weight:600;opacity:.92;margin-top:1px}
 tbody td{height:37px;padding:6px 7px;border-right:1px solid var(--grid);border-bottom:1px solid var(--grid);font-size:11.6px;text-align:center;vertical-align:middle}
@@ -37,6 +37,7 @@ td.na{background:#f7f9fc;color:#9aa8b8;font-weight:650}
 .tag{font-size:9px;font-weight:850;padding:2px 5px;border-radius:999px;margin-left:2px}
 .tag.new{background:#d8f6e1;color:#0a7134;border:1px solid #b9e9c6}
 .tag.star{background:#fff1bd;color:#775900;border:1px solid #ead68b}
+.tag.editors-pick{background:#e9e6ff;color:#42358a;border:1px solid #cfc8ff;cursor:help}
 .notes{display:grid;grid-template-columns:1.25fr .9fr;gap:10px;margin-top:10px}
 .note{background:#f8fbff;border:1px solid #dbe5f1;border-radius:9px;padding:9px 11px;color:#526780;font-size:11px;line-height:1.48}
 .note b{color:#173b70}

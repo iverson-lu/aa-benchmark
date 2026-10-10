@@ -12,7 +12,14 @@ export default {
         const { results } = await env.DB.prepare(`SELECT m.*, p.name AS provider, p.icon_key
           FROM models m JOIN providers p ON p.id = m.provider_id ORDER BY m.display_order`).all<Model>();
         const dates = results.map(m => m.data_date).sort();
-        const snapshot: Snapshot = { models: results.map(model => ({ ...model, provenance: provenance[model.id] })), dataDate: dates.at(-1) ?? null };
+        const snapshot: Snapshot = { models: results.map(model => ({
+          ...model,
+          // Keep provenance attached to factual values only; null agent cells
+          // remain clean em dashes instead of implying a source for no result.
+          provenance: Object.fromEntries(Object.entries(provenance[model.id] ?? {}).filter(([key]) =>
+            model[key as keyof Model] !== null && model[key as keyof Model] !== undefined
+          ))
+        })), dataDate: dates.at(-1) ?? null };
         return Response.json(snapshot, { headers: { 'Cache-Control': 'no-store' } });
       } catch (error) {
         console.error('D1 query failed', error);

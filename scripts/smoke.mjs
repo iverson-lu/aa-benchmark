@@ -7,10 +7,17 @@ const response = await fetch(`${base}/api/snapshot`);
 assert.equal(response.status, 200);
 const snapshot = await response.json();
 assert.equal(snapshot.models.length, seed.models.length);
+const sourcedFields = ['input_price', 'output_price', 'intelligence', 'hle', 'gdpval', 'automation', 'scicode', 'terminal_model', 'deepswe', 'terminal_harness', 'swe_atlas', 'tokens_per_task', 'cost_per_task', 'harness'];
+let sourcedCellCount = 0;
 for (const expected of seed.models) {
   const actual = snapshot.models.find(m => m.id === expected.id);
   assert.ok(actual, expected.id);
   for (const [key, value] of Object.entries(expected)) assert.deepEqual(actual[key], value, `${expected.id}.${key}`);
+  for (const key of sourcedFields) {
+    if (expected[key] == null) continue;
+    sourcedCellCount++;
+    assert.ok(actual.provenance?.[key]?.sourceUrl, `Missing source: ${expected.id}.${key}`);
+  }
 }
 const page = await fetch(base);
 assert.equal(page.status, 200);
@@ -28,4 +35,4 @@ for (const provider of seed.providers) {
 assert.equal((await fetch(`${base}/api/snapshot`, {method:'POST'})).status, 405);
 assert.equal((await fetch(`${base}/api/missing`)).status, 404);
 assert.equal((await fetch(`${base}/icons/providers/missing.svg`)).status, 404);
-console.log(`PASS: ${seed.models.length} models match imported data; ${seed.providers.length} R2 icons, caching, static assets and read-only routes verified.`);
+console.log(`PASS: ${seed.models.length} models match imported data; ${sourcedCellCount} populated data cells have sources; ${seed.providers.length} R2 icons, caching, static assets and read-only routes verified.`);

@@ -11,15 +11,15 @@ export const views = {
 } satisfies Record<string, { label: string; columns: ColumnKey[] }>;
 export type ViewKey = keyof typeof views;
 export function validView(value: string | null): ViewKey { return value && Object.hasOwn(views, value) ? value as ViewKey : 'overview'; }
-export function column(key: ColumnKey): { label: string; unit: string; group: string } {
+export function column(key: ColumnKey): { label: string; unit: string; group: string; description: string } {
   const metric = metrics.find(metric => metric.key === key);
   if (metric) return metric;
   return {
-    name: { label: 'Model', unit: '', group: 'meta' },
-    provider: { label: 'Provider', unit: '', group: 'meta' },
-    price: { label: 'Price', unit: 'USD / 1M · Input / Output', group: 'meta' },
-    harness: { label: 'Agent Harness', unit: '', group: 'agent' },
-    delta: { label: 'Harness Δ', unit: 'Terminal-Bench · pts', group: 'agent' },
-    value: { label: 'Value Index', unit: 'Internal · 0–100', group: 'agent' }
+    name: { label: 'Model', unit: '', group: 'meta', description: 'The model version evaluated.' },
+    provider: { label: 'Provider', unit: '', group: 'meta', description: 'The organization that provides the model.' },
+    price: { label: 'Price', unit: 'USD / 1M · Input / Output', group: 'meta', description: 'Published API price per million input and output tokens. Actual task cost also depends on how many tokens are used.' },
+    harness: { label: 'Agent Harness', unit: '', group: 'agent', description: 'The coding-agent application and configuration used for the agent benchmark results.' },
+    delta: { label: 'Harness Δ', unit: 'Terminal-Bench · pts', group: 'agent', description: 'Agent Terminal-Bench score minus the model-only score, in percentage points, where both are available.' },
+    value: { label: 'Value Index', unit: 'Internal · 0–100', group: 'agent', description: 'An internal cost-efficiency comparison based on AA Intelligence and Agent Cost / Task. Higher means more intelligence per dollar; it is not an AA benchmark.' }
   }[key as 'name' | 'provider' | 'price' | 'harness' | 'delta' | 'value'];
 }

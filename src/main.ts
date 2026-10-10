@@ -37,6 +37,9 @@ let derived = new Map<string, Derived>();
 let view: ViewKey = 'overview';
 let chartExpanded = false;
 const selected = new Set<string>();
+const editorsPick: Record<string, string> = {
+  'gpt-6-1-sol': 'It delivers exceptionally high intelligence at a very low cost per completed task, making it our best choice for everyday work right now.'
+};
 try { view = validView(localStorage.getItem('aa-benchmark-view')); } catch { /* Storage can be disabled. */ }
 try { historyCheckbox.checked = localStorage.getItem('aa-benchmark-all-versions') === 'true'; } catch { /* Default: latest only. */ }
 viewSelector.replaceChildren(...Object.entries(views).map(([key, preset]) => new Option(preset.label, key)));
@@ -62,11 +65,19 @@ function filteredModels() {
 function renderHeaders(columns: ColumnKey[]) {
   const groups = element('tr', 'header-groups'), headers = element('tr');
   const names: Record<string, string> = { meta: 'Model Info', aa: 'AA Overall', model: 'Model Capability', agent: 'Coding Agent + Harness' };
+  const groupDescriptions: Record<string, string> = {
+    meta: 'Model identity and published API pricing.',
+    aa: 'Artificial Analysis’s composite Intelligence Index.',
+    model: 'Scores for individual model capability benchmarks.',
+    agent: 'Results for coding agents, which combine a model with an agent harness and tools.'
+  };
   for (const key of columns) {
     const meta = column(key), last = groups.lastElementChild as HTMLTableCellElement | null;
     if (last?.dataset.group === meta.group) last.colSpan++;
-    else { const th = element('th', `head-${meta.group}`, names[meta.group]); th.scope = 'colgroup'; th.dataset.group = meta.group; groups.append(th); }
+    else { const th = element('th', `head-${meta.group}`, names[meta.group]); th.scope = 'colgroup'; th.dataset.group = meta.group; th.title = groupDescriptions[meta.group]; groups.append(th); }
     const th = element('th', `head-${meta.group} col-${key}`, meta.label); th.scope = 'col';
+    th.title = meta.description;
+    th.setAttribute('aria-label', `${meta.label}. ${meta.description}`);
     if (meta.unit) th.append(element('small', '', meta.unit));
     if (key === 'delta') th.title = deltaNote;
     if (key === 'value') th.title = valueNote;
@@ -103,6 +114,13 @@ function nameCell(model: Model) {
   if (family.versions.length > 1) name.title = `${family.name} family${model.note ? ` · ${model.note}` : ''}`;
   wrapper.append(label, logo, name);
   if (model.tag) wrapper.append(element('span', model.tag === 'NEW' ? 'tag new' : model.tag === 'PREV' ? 'tag prev' : 'tag star', model.tag));
+  const pickReason = editorsPick[model.id];
+  if (pickReason) {
+    const badge = element('span', 'tag editors-pick', "Iverson's Pick");
+    badge.title = pickReason;
+    badge.setAttribute('aria-label', `Iverson's Pick: ${pickReason}`);
+    wrapper.append(badge);
+  }
   cell.append(wrapper);
   cell.addEventListener('click', event => { if (!(event.target as Element).closest('.compare-check')) toggleSelection(model.id); });
   return cell;
