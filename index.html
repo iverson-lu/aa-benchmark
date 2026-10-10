@@ -1,24 +1,26 @@
-<!DOCTYPE html><html lang="zh-CN"><head>
+<!DOCTYPE html><html lang="en"><head>
 <meta charset="utf-8">
 <meta content="width=device-width,initial-scale=1" name="viewport">
-<title>AA Benchmark · 模型基准对比</title>
+<title>AA Benchmark · Model Decision Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230d3564'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='17' font-family='Arial'%3EAA%3C/text%3E%3C/svg%3E">
 
 <link rel="stylesheet" href="/src/style.css"></head>
 <body>
 <div class="wrap">
 <div class="hero">
 <div>
-<h1>AA Benchmark · 模型基准对比</h1>
+<h1>AA Benchmark · Model Decision Dashboard</h1>
 <div class="subtitle">23 Models · 9 Benchmarks · AA Overall vs. Model Capability vs. Coding Agent + Harness</div>
 </div>
 <div class="asof"><b id="dataDate">Loading latest data…</b><br>Imported from the original HTML. Price is Input / Output USD per 1M tokens.</div>
 </div>
-<div class="app-status" id="appStatus" role="status">正在加载模型数据…</div><div class="card"><div class="table-toolbar">
+<div class="app-status" id="appStatus" role="status">Loading model data…</div><div class="card"><div class="table-toolbar">
 <div class="toolbar-left">
 <div class="search-wrap">
 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"></path></svg>
-<input autocomplete="off" id="modelSearch" placeholder="Search model, provider, harness…" type="search">
+<input aria-label="Search model, provider, harness" autocomplete="off" id="modelSearch" placeholder="Search model, provider, harness…" type="search">
 </div>
+<label class="view-label" for="viewPreset">View <select id="viewPreset" aria-label="View preset"></select></label>
 <select aria-label="Filter by provider" id="providerFilter">
 <option value="">All providers</option>
 <option value="Alibaba">Alibaba</option><option value="Anthropic">Anthropic</option><option value="DeepSeek">DeepSeek</option><option value="Google">Google</option><option value="Meta">Meta</option><option value="Moonshot">Moonshot</option><option value="OpenAI">OpenAI</option><option value="SpaceXAI">SpaceXAI</option><option value="Xiaomi">Xiaomi</option><option value="Zhipu AI">Zhipu AI</option></select>
@@ -33,15 +35,20 @@
 <option value="no">No harness data</option>
 </select>
 <button class="btn ghost" id="resetFilters" type="button">Reset</button>
+<label class="history-toggle" title="By default, only the latest available version in each model family is shown"><input id="showAllVersions" type="checkbox" aria-describedby="versionHint">Show all versions</label>
 </div>
 <div class="toolbar-right">
 <span class="count-chip" id="visibleCount">Loading…</span>
 <span class="count-chip selected-chip" id="selectedCount">0 selected</span>
 <button class="btn ghost" disabled="" id="clearSelection" type="button">Clear selection</button>
 <button class="btn primary" disabled="" id="compareSelected" type="button">Compare selected</button>
+<button class="btn ghost" id="toggleChart" type="button" aria-controls="efficiencyChart" aria-expanded="false">Cost / Performance</button>
 </div>
-</div><div class="scroll">
-<table>
+</div><div id="selectionMessage" class="selection-message" role="status"></div>
+<section id="efficiencyChart" class="efficiency-chart" aria-label="Cost Efficiency analysis" hidden></section>
+<p class="source-hint"><span id="versionHint"></span> · Sources: hover or focus a data point to reveal ⓘ; click data with source details to view them.</p>
+<div class="scroll" id="tableScroll" tabindex="0" role="region" aria-label="Scrollable benchmark table">
+<table id="benchmarkTable" aria-label="AA model benchmarks">
 <thead><tr class="header-groups"><th class="head-meta" colspan="3">Model Info</th><th class="head-aa" colspan="1">AA Overall</th><th class="head-model" colspan="5">Model Capability</th><th class="head-agent" colspan="6">Coding Agent + Harness</th></tr><tr>
 <th class="head-meta">Model</th><th class="head-meta">Provider</th><th class="head-meta">Price<small>USD / 1M tokens<br>Input / Output</small></th>
 <th class="head-aa">AA Intelligence<small>(v4.3.2)</small></th>
@@ -62,4 +69,5 @@
 </div>
 </div>
 
+<dialog id="comparisonDialog" aria-label="Model Decision Dashboard"></dialog>
 <script type="module" src="/src/main.ts"></script></body></html>

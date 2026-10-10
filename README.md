@@ -1,8 +1,32 @@
 # AA Benchmark
 
-轻量的模型基准对比 App，支持搜索、厂商/模型类型/Harness 筛选、多模型对比和最佳值高亮。使用原生 TypeScript 前端、Cloudflare Worker、D1（`providers`、`models` 两张表）和 R2 图标，仅保存最新数据。
+轻量的模型决策 Dashboard，保留搜索、厂商/模型类型/Harness 筛选、分组表格、热力图与冻结表头。新增六种列视图、2–5 模型对比面板、Terminal-Bench Harness Δ、数据来源弹窗及成本 / 能力 Pareto 图。使用原生 TypeScript 前端、Cloudflare Worker、D1（`providers`、`models` 两张表）和 R2 图标，仅保存最新数据。
 
-当前数据从仓库保留的原始 HTML 导入，尚未核验来源数值。
+基础数据保留原始 HTML 导入结果；近期补充模型的核对来源保存在 `data/*sources.md`。本次 Dashboard 升级不修改任何基准数值，也不代表历史数据已全部核验。
+
+## 模型决策功能与计算口径
+
+- 模型系列（Master）：默认每条系列只显示当前快照中最新的版本，勾选“显示全部版本”展开历史，开关状态保存在 localStorage。当前 GPT Sol / Luna、Claude Opus / Sonnet 共折叠 5 个历史版本，默认 21 条，完整数据仍为 26 条。表格与成本图同步，收起历史保留已勾选模型的对比状态。Reset 清除搜索和其他筛选，保留版本开关偏好。
+- `src/families.ts` 显式维护系列 ID、名称和从新到旧的模型 ID 列表。新增同系列版本时将它加入对应列表的正确位置；不通过名称、NEW 标签、分数或快照日期推断版本关系。未配置的模型独立显示，不将 Astra / Terra、Argon / Flash、Pro / Flash 等不同产品线自动合并。先确定各系列最新版本，再执行搜索等筛选；查看旧版本需要打开历史开关。
+- View：Overview（新用户默认）、Model Capability、Coding、Agent、Cost Efficiency、All。选择存于 localStorage；切换视图保留筛选及勾选状态。All 保留原始 15 列。
+- Compare selected：选择 2–5 个模型打开对比面板，分别比较模型能力、Agent 成绩、Harness 影响、API 价格和任务效率。关闭保留勾选，移除及清空与主表同步。筛选不移除已选模型。
+- Harness Δ：仅计算 Terminal-Bench 4.0 Harness − Model 的百分比点差；任一侧缺失显示 `—`，不比较其他基准。
+- AA Coding Agent Index v1.5（按官方公式复算）：`(DeepSWE v1.1 + Terminal-Bench 4.0 Harness + SWE-Atlas-QnA) / 3`。采用 [AA 官方方法](https://artificialanalysis.ai/methodology/coding-agents-benchmarking) 的三项等权平均，不做 min–max 或百分位归一化。本地要求三项有效百分比分数齐全；缺失任一项显示 N/A，不用两项平均补齐。已有数据是公开显示的整数分数，复算值可能与 AA 使用完整精度计算的官方结果有少量舍入差异。模型指数不受其他模型或筛选影响。
+- Value Index（内部派生）：上述复算指数 / 正数 Cost per Task，再除以完整快照的最大有效比值并乘 100。缺失、零或负成本及不完整的三项成绩不计算。这一成本效率比例仍是本 App 的内部指标，未声称为 AA 官方指数。
+- Pareto：在当前图表所显示的模型中，没有另一模型成本不高于它、Coding Agent Index 不低于它，且至少一维严格更优。等成本更强的模型构成支配；完全相同的点都保留。绿色优选点始终突出，连线默认关闭，可通过“连接绿色优选点”开启；连线仅帮助观察取舍，不代表预测或连续产品。筛选 / 对比改变前沿的候选集合，不改变单个模型的指数及 Value Index 的参考快照。
+- 对比摘要：Best Overall 使用 AA Intelligence；Best Model Capability 仅在五项模型指标完整且逐项占优时显示。Agent / Value 摘要需要匹配的指标覆盖；任何候选缺失相应数据时不推断赢家。单项成绩仍可标记 Best available 和并列排名。
+
+Coding Agent Index 使用 AA 官方公式复算，未冒充 AA 直接发布的精确指数；Value Index 仍为内部计算。任务成本直接使用已有数据，不从基准分数或 API 单价推算。不同 Harness、effort 和测试设置可能影响可比性。
+
+### 渐进补充来源
+
+`data/provenance.ts` 是独立的模型 ID / 数据字段来源映射，由 Worker 附加到 `/api/snapshot`，无需变更 D1 结构或重新导入数值。当前只接入仓库来源文档明确记录的 Haiku 5.5、Gemini 4 Argon、MiMo-V2.6-Flash 及 Qwen Agent 版本备注；其余历史成绩尚缺逐项原始链接、测试 / 发布日期和方法论信息。
+
+`checkedDate` 表示来源核对日期，`data_date` 表示数据快照日期，两者均不能当作测试 / 发布日期。未知缺失原因仍显示 `—`；仅有来源信息的单元格在悬停或键盘聚焦时显示 ⓘ，默认隐藏，点击数据本身也可打开详情，支持触屏。来源字段支持 `source`、`sourceUrl`、`methodologyUrl`、`date`、`checkedDate`、`harness`、`effort`、`status` 和 `notes`，只填写已知事实。
+
+前端还兼容 `{ value: 73, source: '…', status: 'Published', … }` 结构的基准值及原有数字 / `null`。当前 D1 和 `data/latest.json` 仍保存数字 / `null`；来源信息独立维护在映射中。
+
+模块：`src/views.ts` 管理列视图，`src/analysis.ts` 负责派生计算，`src/chart.ts` 绘制 SVG 图表，`src/compare.ts` 渲染对比面板，`src/provenance.ts` 渲染安全链接和来源弹窗。未增加图表运行依赖。
 
 ## 本地开发
 
@@ -76,6 +100,7 @@ npm run setup:local
 
 ```sh
 npm run check
+npm test
 npm run build
 ```
 
@@ -85,7 +110,7 @@ npm run build
 npm run test:smoke
 ```
 
-该检查验证模型数据、R2 图标、静态资源、缓存条件请求和只读 API。
+`npm test` 验证 Harness Δ、官方 Coding Agent Index 等权公式（含零分 / 满分 / 不完整覆盖）、指数独立于参考人群、Value Index、Pareto（含等价点 / 相同成本）、缺失值、排名及视图映射，使用 Node.js 22.13 或更新版本的类型剥离功能。`test:smoke` 验证原始模型数据未变化、R2 图标、静态资源、缓存条件请求和只读 API。
 
 ## 部署到自己的 Cloudflare 账号
 

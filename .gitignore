@@ -3,3 +3,5 @@ dist/
 .wrangler/
 .dev.vars*
 .env*
+.playwright-cli/
+output/playwright/

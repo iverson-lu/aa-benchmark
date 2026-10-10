@@ -12,10 +12,19 @@ export const metrics = [
   { key: 'cost_per_task', label: 'Cost / Task', unit: 'Avg API cost', group: 'agent', lower: true }
 ] as const;
 export type MetricKey = typeof metrics[number]['key'];
-export type Model = Record<MetricKey, number | null> & {
+export interface Provenance {
+  source?: string; sourceUrl?: string; methodologyUrl?: string;
+  date?: string; checkedDate?: string; harness?: string; effort?: string;
+  status?: 'Published' | 'Not tested' | 'Not published' | 'N/A' | 'Pending' | 'Previous gen' | 'Estimated';
+  notes?: string;
+}
+export type MetricValue = number | null | (Provenance & { value: number | null });
+export type DataKey = MetricKey | 'input_price' | 'output_price' | 'harness';
+export type Model = Record<MetricKey, MetricValue> & {
   id: string; name: string; provider_id: string; provider: string; icon_key: string;
   model_type: 'closed' | 'open'; input_price: number; output_price: number;
   harness: string | null; tag: string | null; note: string | null;
   display_order: number; data_date: string;
+  provenance?: Partial<Record<DataKey, Provenance>>;
 };
 export interface Snapshot { models: Model[]; dataDate: string | null }

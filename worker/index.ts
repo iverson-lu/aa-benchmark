@@ -1,4 +1,5 @@
 import type { Model, Snapshot } from '../src/shared';
+import { provenance } from '../data/provenance';
 interface Env { DB: D1Database; ICONS: R2Bucket; ASSETS: Fetcher }
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -11,11 +12,11 @@ export default {
         const { results } = await env.DB.prepare(`SELECT m.*, p.name AS provider, p.icon_key
           FROM models m JOIN providers p ON p.id = m.provider_id ORDER BY m.display_order`).all<Model>();
         const dates = results.map(m => m.data_date).sort();
-        const snapshot: Snapshot = { models: results, dataDate: dates.at(-1) ?? null };
+        const snapshot: Snapshot = { models: results.map(model => ({ ...model, provenance: provenance[model.id] })), dataDate: dates.at(-1) ?? null };
         return Response.json(snapshot, { headers: { 'Cache-Control': 'no-store' } });
       } catch (error) {
         console.error('D1 query failed', error);
-        return Response.json({ error: '暂时无法读取模型数据，请稍后重试。' }, { status: 503 });
+        return Response.json({ error: 'Model data is temporarily unavailable. Please try again later.' }, { status: 503 });
       }
     }
     if (url.pathname.startsWith('/icons/')) {

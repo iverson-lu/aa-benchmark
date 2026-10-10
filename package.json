@@ -7,6 +7,7 @@
     "dev": "npm run build && wrangler dev --port 8787",
     "build": "vite build",
     "check": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json",
+    "test": "node --test scripts/analysis.test.mjs",
     "test:smoke": "node scripts/smoke.mjs",
     "deploy": "npm run check && npm run build && wrangler deploy",
     "data:extract": "node scripts/extract.mjs",
